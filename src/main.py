@@ -28,15 +28,17 @@ def sendCmds(): # Sends the list of commands, split into sections
             print(f"{cmd}")
     print('-' * 40) # More spacing
     
-def parse(expr): 
-    expr = expr.replace("//", "λ")
+def parse(expr):
+    expr = expr.replace("//", "λ").strip() # Replace //s with λ
     if expr.startswith("λ"):
-        param = expr[1]
-        body = Variable(expr[3:])
-        return Abstraction(param, body)
-    return Variable(expr)
+        param, body = expr[1], expr[3:] # Split the lambda and its body up, then recursively parse the body
+        return Abstraction(param, parse(body))
+    elif len(expr) > 1: # If the remaining body is an application
+        return Application(parse(expr[0]), parse(expr[1:]))
+    else: # Otherwise the remaining body must be a variable
+        return Variable(expr)
 
-def saveAsExpr(): #Asks the user whether they want to save a created expression, returning true or false
+def saveAsExpr(): # Asks the user whether they want to save a created expression, returning true or false
     print(f"Would you like to save this as an expression? [Y/N]")
     while True:
         answer = input().lower()
@@ -46,7 +48,6 @@ def saveAsExpr(): #Asks the user whether they want to save a created expression,
             return False
         else:
             print("Invalid option. Please retry, typing either 'Y' or 'N'.")
-            break # Restart loop
 
 expressions = {} # Initialising expression dictionary
 exprCounter = 0 # Initialising the number of saved expressions, used for naming conventions
@@ -60,55 +61,55 @@ while True:
     
     # -------------------- Expression Creation --------------------
     
-    if params[0] == "createvar" and len(params) == 2:
+    if params[0] == "createvar" and len(params) == 2: # Creating a variable 
         exprCounter += 1
         name = f"expr{exprCounter}"
-        expressions[name] = Variable(params[1])
+        expressions[name] = Variable(params[1]) # Setting exprx to be the entered variable
         print(f"Variable '{expressions[name]}' created as '{name}'.")
         
-    elif params[0] == "createexpr" and len(params) == 2:
+    elif params[0] == "createexpr" and len(params) == 2: # Creating an expression
         exprCounter += 1
         name = f"expr{exprCounter}"
-        expressions[name] = parse(params[1])
+        expressions[name] = parse(params[1]) # Setting exprx to be the entered and parsed expression
         print(f"Expression '{expressions[name]}' created as '{name}'.")
         
     # -------------------- Lambda Operations --------------------
     
-    elif params[0] == "apply" and len(params) == 3:
+    elif params[0] == "apply" and len(params) == 3: # Applying two expressions together
         t1 = expressions.get(params[1])
         t2 = expressions.get(params[2])
-        if t1 and t2:
+        if t1 and t2: # If the entered expression names exist
             appTerms = Application(t1, t2)
             print(f"Application of {t1} and {t2}: {appTerms}")
             if saveAsExpr():
                 exprCounter += 1
                 name = f"expr{exprCounter}"
-                expressions[name] = appTerms
+                expressions[name] = appTerms # Setting exprx to be the applied expressions
                 print(f"Expression '{expressions[name]}' created.")
         else:
             print("No expressions found with the entered names.")
     
-    elif params[0] == "substitute" and len(params) == 4:
+    elif params[0] == "substitute" and len(params) == 4: # Substituting a variable into an expression
         t1 = expressions.get(params[1])
         t2 = expressions.get(params[2])
         t3 = expressions.get(params[3])
-        if t1 and t2 and t3:
+        if t1 and t2 and t3: # If the expression, and original and replacement variables exist
             subTerm = substitute(t1, t2.name, t3)
             print(f"Substitution of {t2} for {t3} in {t1}: {subTerm}")
             if saveAsExpr():
                 exprCounter += 1
                 name = f"expr{exprCounter}"
-                expressions[name] = subTerm
+                expressions[name] = subTerm # Setting exprx to be the substituted expression
                 print(f"Expression '{expressions[name]}' created.")
         else:
             print("No expressions found with the entered names.")
             
     # -------------------- Basic Commands --------------------
             
-    elif params[0] == "commands" and len(params) == 1:
+    elif params[0] == "commands" and len(params) == 1: # Showing list of commands
         sendCmds()
             
-    elif params[0] == "delete" and len(params) == 2:
+    elif params[0] == "delete" and len(params) == 2: # Deleting an expression
         name = params[1]
         if expressions[name]:
             expressions.__delitem__(name)
@@ -116,21 +117,21 @@ while True:
         else:
             print("No expression found with that name.")
         
-    elif params[0] == "show" and len(params) == 2:
+    elif params[0] == "show" and len(params) == 2: # Showing an expression
         name = params[1]
         if expressions[name]:
             print(f"{expressions[name]}")
         else:
             print(f"No expression found with that name.")
             
-    elif params[0] == "list" and len(params) == 1:
+    elif params[0] == "list" and len(params) == 1: # Listing all expressions
         if expressions:
             for name, expr in expressions.items():
                 print(f"{name}: {expr}")
         else:
             print("No expressions have been defined.")
             
-    elif params[0].lower() == "quit":
+    elif params[0].lower() == "quit": # Quitting
         break
     
     # -------------------- Unknown Command --------------------
