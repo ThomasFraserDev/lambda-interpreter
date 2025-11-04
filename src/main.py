@@ -1,5 +1,6 @@
 from ast import Variable, Abstraction, Application
 from substitution import substitute
+from reduction import betaReduce
 
 def sendCmds(): # Sends the list of commands, split into sections
     sections = {
@@ -9,7 +10,8 @@ def sendCmds(): # Sends the list of commands, split into sections
         ],
         "Lambda Functionality": [
             "Apply <expr1> <expr2> [applies two expressions]",
-            "Substitute <expr> <var> <replacement> [replaces all occurrences of <var> in <expr> with <replacement>]"
+            "Substitute <expr> <var> <replacement> [replaces all occurrences of <var> in <expr> with <replacement>]",
+            "BetaRed <expr> [beta reduces a given expression]"
         ],
         "Basic Commands": [
             "Commands [prints all commands]",
@@ -76,11 +78,11 @@ while True:
     # -------------------- Lambda Operations --------------------
     
     elif params[0] == "apply" and len(params) == 3: # Applying two expressions together
-        t1 = expressions.get(params[1])
-        t2 = expressions.get(params[2])
-        if t1 and t2: # If the entered expression names exist
-            appTerms = Application(t1, t2)
-            print(f"Application of {t1} and {t2}: {appTerms}")
+        e1 = expressions.get(params[1])
+        e2 = expressions.get(params[2])
+        if e1 and e2: # If the entered expression names exist
+            appTerms = Application(e1, e2)
+            print(f"Application of {e1} and {e2}: {appTerms}")
             if saveAsExpr():
                 exprCounter += 1
                 name = f"expr{exprCounter}"
@@ -90,16 +92,29 @@ while True:
             print("No expressions found with the entered names.")
     
     elif params[0] == "substitute" and len(params) == 4: # Substituting a variable into an expression
-        t1 = expressions.get(params[1])
-        t2 = expressions.get(params[2])
-        t3 = expressions.get(params[3])
-        if t1 and t2 and t3: # If the expression, and original and replacement variables exist
-            subTerm = substitute(t1, t2.name, t3)
-            print(f"Substitution of {t2} for {t3} in {t1}: {subTerm}")
+        e1 = expressions.get(params[1])
+        e2 = expressions.get(params[2])
+        e3 = expressions.get(params[3])
+        if e1 and e2 and e3: # If the expression, and original and replacement variables exist
+            subTerm = substitute(e1, e2.name, e3)
+            print(f"Substitution of {e2} for {e3} in {e1}: {subTerm}")
             if saveAsExpr():
                 exprCounter += 1
                 name = f"expr{exprCounter}"
                 expressions[name] = subTerm # Setting exprx to be the substituted expression
+                print(f"Expression '{expressions[name]}' created.")
+        else:
+            print("No expressions found with the entered names.")
+            
+    elif params[0] == "betared" and len(params) == 2:
+        e1 = expressions.get(params[1])
+        if e1:
+            redTerm = betaReduce(e1)
+            print(f"The beta normal form of {e1} is: {redTerm}")
+            if saveAsExpr():
+                exprCounter += 1
+                name = f"expr{exprCounter}"
+                expressions[name] = redTerm # Setting exprx to be the reduced expression
                 print(f"Expression '{expressions[name]}' created.")
         else:
             print("No expressions found with the entered names.")

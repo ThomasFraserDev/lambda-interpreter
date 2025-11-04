@@ -1,34 +1,33 @@
 from ast import Variable, Abstraction, Application
 
-listOrder = ["x", "y", "z", "x'", "y'", "z'"]
+listOrder = ["x", "y", "z", "x'", "y'", "z'"] 
 
-def contains_var(term, name):
-    if isinstance(term, Variable):
-        return term.name == name
-    elif isinstance(term, Abstraction):
-        return contains_var(term.body, name)
-    elif isinstance(term, Application):
-        return contains_var(term.func, name) or contains_var(term.arg, name)
+def contains_var(expr, name): # Method that checks whether a variable is contained within an expression
+    if isinstance(expr, Variable): #If the expression is a variable, check if its name matches
+        return expr.name == name
+    elif isinstance(expr, Abstraction): #If it's an abstraction, check the body
+        return contains_var(expr.body, name)
+    elif isinstance(expr, Application): #If it's an application, check it's function and argument
+        return contains_var(expr.func, name) or contains_var(expr.arg, name)
     else:
         return False
 
-def substitute(term, var, replacement):
-    
-    if isinstance(term, Variable):
-        if term.name == var:
+def substitute(expr, var, replacement):
+    if isinstance(expr, Variable): #If the expression is a variable
+        if expr.name == var: #If it matches the variable to be replaced
             return replacement
         else:
-            return term
+            return expr
     
-    elif isinstance(term, Abstraction):
-        if contains_var(replacement, term.param):
-            for v in listOrder:
-                if not contains_var(term.body, v) and v != term.param:
-                    substituted = substitute(term.body, term.param, Variable(v))
-                    return Abstraction(v, substitute(substituted, var, replacement))
+    elif isinstance(expr, Abstraction): #If the expression is an abstraction
+        if contains_var(replacement, expr.param): #If substitution would cause variable capture
+            for v in listOrder: #Find a variable name not already used
+                if not contains_var(expr.body, v) and v != expr.param:
+                    substituted = substitute(expr.body, expr.param, Variable(v)) #Rename bound variable
+                    return Abstraction(v, substitute(substituted, var, replacement)) #Substitute with renamed variable
         else:
-            substituted = substitute(term.body, var, replacement)
-            return Abstraction(term.param, substituted)
+            substituted = substitute(expr.body, var, replacement) #Substitute inside body
+            return Abstraction(expr.param, substituted)
         
-    elif isinstance(term, Application):
-        return Application(substitute(term.func, var, replacement), substitute(term.arg, var, replacement))
+    elif isinstance(expr, Application): #If the expression is an application
+        return Application(substitute(expr.func, var, replacement), substitute(expr.arg, var, replacement))
