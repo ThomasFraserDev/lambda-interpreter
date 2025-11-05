@@ -10,9 +10,8 @@ def parse(expr):
         # The inner application is just the first two
             inner = Application(parse(expr[0]), parse(expr[1]))
         # The outer application applies that to the rest
-            glorp = Application(inner, parse(expr[2:]))
-            print(f"m{glorp}")
-            return glorp
+            app = Application(inner, parse(expr[2:]))
+            return app
         else:
             return Application(parse(expr[0]), parse(expr[1]))
     else: # Otherwise the remaining body must be a variable

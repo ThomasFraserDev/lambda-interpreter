@@ -13,7 +13,8 @@ def sendCmds(): # Sends the list of commands, split into sections
             "Apply <expr1> <expr2> [applies two expressions]",
             "Substitute <expr> <var> <replacement> [replaces all occurrences of <var> in <expr> with <replacement>]",
             "BetaRed <expr> [beta reduces a given expression]",
-            "EtaRed <expr> [eta reduces a given expression]"
+            "EtaRed <expr> [eta reduces a given expression]",
+            "BetaEtaRed <expr [beta eta reduces a given expression]"
         ],
         "Basic Commands": [
             "Commands [prints all commands]",
@@ -81,7 +82,7 @@ def startREPL():
                     exprCounter += 1
                     name = f"expr{exprCounter}"
                     expressions[name] = appTerms # Setting exprx to be the applied expressions
-                    print(f"Expression '{expressions[name]}' created.")
+                    print(f"Expression '{expressions[name]}' created as {name}.")
             else:
                 print("No expressions found with the entered names.")
     
@@ -96,11 +97,11 @@ def startREPL():
                     exprCounter += 1
                     name = f"expr{exprCounter}"
                     expressions[name] = subTerm # Setting exprx to be the substituted expression
-                    print(f"Expression '{expressions[name]}' created.")
+                    print(f"Expression '{expressions[name]}' created as {name}.")
             else:
                 print("No expressions found with the entered names.")
             
-        elif params[0] == "betared" and len(params) == 2:
+        elif params[0] == "betared" and len(params) == 2: # Beta reducing an expression
             e1 = expressions.get(params[1])
             if e1:
                 redTerm = betaReduce(e1)
@@ -109,11 +110,11 @@ def startREPL():
                     exprCounter += 1
                     name = f"expr{exprCounter}"
                     expressions[name] = redTerm # Setting exprx to be the beta reduced expression
-                    print(f"Expression '{expressions[name]}' created.")
+                    print(f"Expression '{expressions[name]}' created as {name}.")
             else:
                 print("No expressions found with the entered names.")
             
-        elif params[0] == "etared" and len(params) == 2:
+        elif params[0] == "etared" and len(params) == 2: # Eta reducing an expression
             e1 = expressions.get(params[1])
             if e1:
                 redTerm = etaReduce(e1)
@@ -122,7 +123,21 @@ def startREPL():
                     exprCounter += 1
                     name = f"expr{exprCounter}"
                     expressions[name] = redTerm # Setting exprx to be the eta reduced expression
-                    print(f"Expression '{expressions[name]}' created.")
+                    print(f"Expression '{expressions[name]}' created as {name}.")
+            else:
+                print("No expressions found with the entered names.")
+                
+        elif params[0] == "betaetared" and len(params) == 2: # Beta eta reducing an expression
+            e1 = expressions.get(params[1])
+            if e1:
+                redTerm = betaReduce(e1)
+                redTerm = etaReduce(e1)
+                print(f"The beta eta normal form of {e1} is: {redTerm}")
+                if saveAsExpr():
+                    exprCounter += 1
+                    name = f"expr{exprCounter}"
+                    expressions[name] = redTerm # Setting exprx to be the beta eta reduced expression
+                    print(f"Expression '{expressions[name]}' created as {name}.")
             else:
                 print("No expressions found with the entered names.")
             
