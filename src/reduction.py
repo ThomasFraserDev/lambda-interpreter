@@ -28,6 +28,6 @@ def etaReduce(expr):
     if freeVars(expr.param, freeBody) and isinstance(expr.body, Abstraction): # If the expression is eta reduceable and is an abstraction
         expr2 = etaReduce(Abstraction(str(expr.body)[2], freeBody.func)) # Recursively create the eta reduced expression
     else:
-        expr2 = freeBody.func # Create the eta reduced expression
+        expr2 = freeBody.func if hasattr(freeBody, "func") else freeBody # Create the eta reduced expression
 
     return expr2

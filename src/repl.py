@@ -2,6 +2,7 @@ from ast import Variable, Abstraction, Application
 from parser import parse
 from substitution import substitute
 from reduction import betaReduce, etaReduce
+from equivalence import equivalent
 
 def sendCmds(): # Sends the list of commands, split into sections
     sections = {
@@ -12,6 +13,7 @@ def sendCmds(): # Sends the list of commands, split into sections
         "Lambda Functionality": [
             "Apply <expr1> <expr2> [applies two expressions]",
             "Substitute <expr> <var> <replacement> [replaces all occurrences of <var> in <expr> with <replacement>]",
+            "Equivalent <expr1> <expr2> [checks that two expressions are logically equivalent]",
             "BetaRed <expr> [beta reduces a given expression]",
             "EtaRed <expr> [eta reduces a given expression]",
             "BetaEtaRed <expr [beta eta reduces a given expression]"
@@ -100,6 +102,17 @@ def startREPL():
                     print(f"Expression '{expressions[name]}' created as {name}.")
             else:
                 print("No expressions found with the entered names.")
+                
+        elif params[0] == "equivalent" and len(params) == 3:
+            e1 = expressions.get(params[1])
+            e2 = expressions.get(params[2])
+            if e1 and e2:
+                if equivalent(e1, e2):
+                    print(f"{e1} and {e2} are logically equivalent.")
+                else:
+                    print(f"{e1} and {e2} are not logically equivalent.")
+            else:
+                print("No expressions found with the entered names.")
             
         elif params[0] == "betared" and len(params) == 2: # Beta reducing an expression
             e1 = expressions.get(params[1])
@@ -130,8 +143,7 @@ def startREPL():
         elif params[0] == "betaetared" and len(params) == 2: # Beta eta reducing an expression
             e1 = expressions.get(params[1])
             if e1:
-                redTerm = betaReduce(e1)
-                redTerm = etaReduce(e1)
+                redTerm = etaReduce(betaReduce(e1))
                 print(f"The beta eta normal form of {e1} is: {redTerm}")
                 if saveAsExpr():
                     exprCounter += 1
