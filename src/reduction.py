@@ -20,6 +20,12 @@ def betaReduce(expr):
         return expr
     
 def etaReduce(expr):
+    if not isinstance(expr, Abstraction):
+        return expr
+    
+    if isinstance(expr.body, Variable):
+        return expr
+    
     if isinstance(expr.body, Abstraction): # If the expression is an abstraction
         freeBody = getBody(expr.body) # Find it's true free body
     else:
