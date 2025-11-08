@@ -1,5 +1,5 @@
 from ast import Variable, Abstraction, Application
-from utils import containsVar
+from operations.utils import containsVar
 
 listOrder = ["x", "y", "z", "x'", "y'", "z'"] 
 

@@ -1,13 +1,13 @@
-from ast import Variable, Abstraction, Application
-from parser import parse
-from substitution import substitute
-from reduction import betaReduce, etaReduce
-from equivalence import equivalent
+from ast import Variable, Application
+from operations.parser import parse
+from operations.substitution import substitute
+from operations.reduction import betaReduce, etaReduce
+from operations.equivalence import equivalent
 
 def sendCmds(): # Sends the list of commands, split into sections
     sections = {
         "Expression Creation": [
-            "CreateVar <name> [creates a variable]",
+            "CreateVar <expr> [creates a variable]",
             "CreateExpr <expr> [creates an expression]"
         ],
         "Lambda Functionality": [
@@ -20,7 +20,10 @@ def sendCmds(): # Sends the list of commands, split into sections
         ],
         "Basic Commands": [
             "Commands [prints all commands]",
+            "Shortcuts [prints all command shortcuts]",
+            "Rename <name> <newName> [renames an expression]",
             "Delete <expr> [deletes an expression]",
+            "DeleteAll [deletes all expressions]",
             "Show <name> [shows an expression]",
             "List [lists all expressions]",
             "Quit [quits the programme]"
@@ -28,6 +31,40 @@ def sendCmds(): # Sends the list of commands, split into sections
     }
 
     print(" " * 14 + "Command List")
+    print('-' * 40) # Spacing
+    for section, commands in sections.items():
+        print(f"\n{section}:") # Print each sections and its commands
+        for cmd in commands:
+            print(f"{cmd}")
+    print('-' * 40) # More spacing
+    
+def sendShortcuts(): # Sends the list of command shortcuts, split into sections
+    sections = {
+        "Expression Creation": [
+            "CreateVar -> CV",
+            "CreateExpr -> CE"
+        ],
+        "Lambda Functionality": [
+            "Apply -> APP",
+            "Substitute -> SUB",
+            "Equivalent -> EQ",
+            "BetaRed -> BR",
+            "EtaRed -> ER",
+            "BetaEtaRed -> BER"
+        ],
+        "Basic Commands": [
+            "Commands -> CMDS",
+            "Shortcuts -> SC",
+            "Rename -> RN",
+            "Delete -> DEL",
+            "DeleteAll -> DELA"
+            "Show -> S",
+            "List -> L",
+            "Quit -> Q"
+        ]
+    }
+    
+    print(" " * 9 + "Command Shortcut List")
     print('-' * 40) # Spacing
     for section, commands in sections.items():
         print(f"\n{section}:") # Print each sections and its commands
@@ -60,13 +97,13 @@ def startREPL():
     
         # -------------------- Expression Creation --------------------
     
-        if params[0] == "createvar" and len(params) == 2: # Creating a variable 
+        if (params[0] == "createvar" or params[0] == "cv") and len(params) == 2: # Creating a variable 
             exprCounter += 1
             name = f"expr{exprCounter}"
             expressions[name] = Variable(params[1]) # Setting exprx to be the entered variable
             print(f"Variable '{expressions[name]}' created as '{name}'.")
         
-        elif params[0] == "createexpr" and len(params) == 2: # Creating an expression
+        elif (params[0] == "createexpr" or params[0] == "ce") and len(params) == 2: # Creating an expression
             exprCounter += 1
             name = f"expr{exprCounter}"
             expressions[name] = parse(params[1]) # Setting exprx to be the entered and parsed expression
@@ -74,7 +111,7 @@ def startREPL():
         
         # -------------------- Lambda Operations --------------------
     
-        elif params[0] == "apply" and len(params) == 3: # Applying two expressions together
+        elif (params[0] == "apply" or params[0] == "app") and len(params) == 3: # Applying two expressions together
             e1 = expressions.get(params[1])
             e2 = expressions.get(params[2])
             if e1 and e2: # If the entered expression names exist
@@ -88,7 +125,7 @@ def startREPL():
             else:
                 print("No expressions found with the entered names.")
     
-        elif params[0] == "substitute" and len(params) == 4: # Substituting a variable into an expression
+        elif (params[0] == "substitute" or params[0] == "sub") and len(params) == 4: # Substituting a variable into an expression
             e1 = expressions.get(params[1])
             e2 = expressions.get(params[2])
             e3 = expressions.get(params[3])
@@ -103,7 +140,7 @@ def startREPL():
             else:
                 print("No expressions found with the entered names.")
                 
-        elif params[0] == "equivalent" and len(params) == 3:
+        elif (params[0] == "equivalent" or params[0] == "eq") and len(params) == 3:
             e1 = expressions.get(params[1])
             e2 = expressions.get(params[2])
             if e1 and e2:
@@ -114,7 +151,7 @@ def startREPL():
             else:
                 print("No expressions found with the entered names.")
             
-        elif params[0] == "betared" and len(params) == 2: # Beta reducing an expression
+        elif (params[0] == "betared" or params[0] == "br") and len(params) == 2: # Beta reducing an expression
             e1 = expressions.get(params[1])
             if e1:
                 redTerm = betaReduce(e1)
@@ -127,7 +164,7 @@ def startREPL():
             else:
                 print("No expressions found with the entered names.")
             
-        elif params[0] == "etared" and len(params) == 2: # Eta reducing an expression
+        elif (params[0] == "etared" or params[0] == "er") and len(params) == 2: # Eta reducing an expression
             e1 = expressions.get(params[1])
             if e1:
                 redTerm = etaReduce(e1)
@@ -140,7 +177,7 @@ def startREPL():
             else:
                 print("No expressions found with the entered names.")
                 
-        elif params[0] == "betaetared" and len(params) == 2: # Beta eta reducing an expression
+        elif (params[0] == "betaetared" or params[0] == "ber") and len(params) == 2: # Beta eta reducing an expression
             e1 = expressions.get(params[1])
             if e1:
                 redTerm = etaReduce(betaReduce(e1))
@@ -155,32 +192,52 @@ def startREPL():
             
         # -------------------- Basic Commands --------------------
             
-        elif params[0] == "commands" and len(params) == 1: # Showing list of commands
+        elif (params[0] == "commands" or params[0] == "cmds") and len(params) == 1: # Show list of all commands
             sendCmds()
             
-        elif params[0] == "delete" and len(params) == 2: # Deleting an expression
+        elif (params[0] == "shortcuts" or params[0] == "sc") and len(params) == 1: # Show list of all command shortcuts
+            sendShortcuts()
+
+        elif (params[0] == "rename" or params[0] == "rn") and len(params) == 3: # Renames a created expression
+            name = params[1]
+            newName = params[2]
+            if expressions[name]:
+                expressions[newName] = expressions[name]
+                expressions.__delitem__(name)
+                print(f"Expression {expressions[newName]} renamed to {newName}.")
+            else:
+                print(f"No expressions found with name {name}.")
+            
+        elif (params[0] == "delete" or params[0] == "del") and len(params) == 2: # Delete a created expression
             name = params[1]
             if name in expressions:
                 expressions.__delitem__(name)
                 print(f"Expressions {name} deleted successfully.")
             else:
                 print("No expression found with that name.")
+                
+        elif (params[0] == "deleteall" or params[0] == "dela") and len(params) == 1: # Delete all created expressions
+            if expressions:
+                expressions.clear()
+                print(f"Expressions deleted successfully.")
+            else:
+                print("No expressions found.")
         
-        elif params[0] == "show" and len(params) == 2: # Showing an expression
+        elif (params[0] == "show" or params[0] == "s") and len(params) == 2: # Show a created expression
             name = params[1]
             if expressions[name]:
                 print(f"{expressions[name]}")
             else:
                 print(f"No expression found with that name.")
             
-        elif params[0] == "list" and len(params) == 1: # Listing all expressions
+        elif (params[0] == "list" or params[0] == "l") and len(params) == 1: # List all created expressions
             if expressions:
                 for name, expr in expressions.items():
                     print(f"{name}: {expr}")
             else:
                 print("No expressions have been defined.")
             
-        elif params[0].lower() == "quit": # Quitting
+        elif (params[0].lower() == "quit" or params[0] == "q"): # Quit
             break
     
     # -------------------- Unknown Command --------------------

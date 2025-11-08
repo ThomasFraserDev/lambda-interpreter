@@ -1,6 +1,6 @@
 from ast import Variable, Abstraction, Application
-from substitution import substitute
-from utils import freeVars
+from operations.substitution import substitute
+from operations.utils import freeVars
 
 def getBody(expr): # Helper method that recursively gets the true free body of an abstraction
         if isinstance(expr.body, Abstraction):

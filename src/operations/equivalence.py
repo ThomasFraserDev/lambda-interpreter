@@ -1,4 +1,4 @@
-from reduction import betaReduce, etaReduce
+from operations.reduction import betaReduce, etaReduce
 from ast import Variable, Abstraction, Application
 
 def alphaEquivalent(e1, e2, env=None): # Method that recursively checks whether two expressions are structurally the same
