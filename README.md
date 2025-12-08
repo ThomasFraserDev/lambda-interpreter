@@ -4,7 +4,7 @@
 
 A command-line REPL for manipulating and reducing lambda calculus expressions with support for β-reduction, η-reduction, substitution, and α-equivalence checking.
 
-## ✨ Features
+## 🌐 Features
 
 - **Expression Creation**: Build lambda terms and variables
 - **Lambda Calculus Operations**:
@@ -15,7 +15,7 @@ A command-line REPL for manipulating and reducing lambda calculus expressions wi
 - **Equivalence Checking**: Test if two expressions are logically equivalent (α-equivalence after normalization)
 - **Interactive REPL**: Manage expressions with save/show/list/delete commands
 
-## 📋 Command Reference
+## 📋 Command List
 
 ### Expression Creation
 - `CreateVar <name>` - Create a variable
@@ -39,7 +39,7 @@ A command-line REPL for manipulating and reducing lambda calculus expressions wi
 - `List` - List all saved expressions
 - `Quit` - Exit the interpreter
 
-## 🚀 Getting Started
+## 🧰 How To Run
 
 ### Prerequisites
 
@@ -67,20 +67,14 @@ lambda-interpreter/
 │   ├── substitution.py  # Capture-avoiding substitution logic
 │   ├── reduction.py     # β and η reduction algorithms
 │   ├── equivalence.py   # α-equivalence and logical equivalence checking
-│   ├── utils.py         # Helper functions (free variable checks)
+│   ├── utils.py         # Helper functions
 │   ├── repl.py          # REPL implementation
 │   └── main.py          # Entry point
 ├── README.md
 └── LICENSE
 ```
 
-## 🧮 Notation
 
-- `//` represents λ (lambda) in input
-- Variables: single characters (e.g., `x`, `y`, `z`)
-- Abstraction: `//x.body` creates λx.body
-- Application: juxtaposition (e.g., `abc` means `((a b) c)`)
-
-## 📝 License
+## 🪙 License
 
 This software is licensed under the MIT license.
