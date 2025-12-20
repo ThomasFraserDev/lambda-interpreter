@@ -4,7 +4,7 @@
 
 A command-line REPL for manipulating and reducing lambda calculus expressions with support for β-reduction, η-reduction, substitution, and α-equivalence checking.
 
-## 🌐 Features
+## Features
 
 - **Expression Creation**: Build lambda terms and variables
 - **Lambda Calculus Operations**:
@@ -15,7 +15,7 @@ A command-line REPL for manipulating and reducing lambda calculus expressions wi
 - **Equivalence Checking**: Test if two expressions are logically equivalent (α-equivalence after normalization)
 - **Interactive REPL**: Manage expressions with save/show/list/delete commands
 
-## 📋 Command List
+## Command List
 
 ### Expression Creation
 - `CreateVar <name>` - Create a variable
@@ -39,7 +39,7 @@ A command-line REPL for manipulating and reducing lambda calculus expressions wi
 - `List` - List all saved expressions
 - `Quit` - Exit the interpreter
 
-## 🧰 How To Run
+## How To Run
 
 ### Prerequisites
 
@@ -57,7 +57,7 @@ Or if you're in the `src` directory:
 python3 main.py
 ```
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 lambda-interpreter/
