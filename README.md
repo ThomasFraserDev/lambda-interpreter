@@ -73,8 +73,26 @@ lambda-interpreter/
 ├── README.md
 └── LICENSE
 ```
+## Contributing
 
+Contributions are welcome! :]
 
-## 🪙 License
+If you’d like to help improve this lambda interpreter, please follow these steps:
+1. Fork the repository and create a new branch from main.
+2. For UI changes, screenshots or short clips are encouraged.
+3. Make sure the project runs locally:
+```bash
+npm install
+npm run dev
+```
+4. Open a Pull Request with:
+- A clear description of what you changed or added 
+- The reasoning behind it
+
+If you’re unsure about an idea or want feedback before starting, feel free to open an issue to discuss it first.
+
+Thanks for helping make this project better! 💜
+
+## License
 
 This software is licensed under the MIT license.
